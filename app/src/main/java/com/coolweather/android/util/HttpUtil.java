@@ -13,6 +13,5 @@ public class HttpUtil {
                 .url(address)
                 .build();
         client.newCall(request).enqueue(callback);
-        Log.d(TAG, "HttpUtil 1 ");
     }
 }
