@@ -1,7 +1,9 @@
 package com.coolweather.android;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +39,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class ChooseAreaFragment extends Fragment {
+    private static final String TAG = "ChooseAreaFragment";
     public static final int LEVEL_PROVINCE = 0;
     public static final int LEVEL_CITY = 1;
     public static final int LEVEL_COUNTY = 2;
@@ -70,6 +73,7 @@ public class ChooseAreaFragment extends Fragment {
         listView=(ListView)view.findViewById(R.id.list_view);
         adapter=new ArrayAdapter<>(getContext(),android.R.layout.simple_list_item_1,dataList);
         listView.setAdapter(adapter);
+        Log.d(TAG, "ChooseAreaFragment 1");
         return view;
     }
 
@@ -82,17 +86,29 @@ public class ChooseAreaFragment extends Fragment {
                 if(currentLevel==LEVEL_PROVINCE){
                     selectedProvince=provinceList.get(position);
                     queryCities();
+                    Log.d(TAG, "ChooseAreaFragment 2");
                 }else if(currentLevel==LEVEL_CITY){
                     selectedCity=cityList.get(position);
                     queryCounties();
+                    Log.d(TAG, "ChooseAreaFragment 3");
+                }else if(currentLevel==LEVEL_COUNTY){
+                    String weatherId=countyList.get(position).getWeatherId();
+                    Intent intent=new Intent(getActivity(),WeatherActivity.class);
+                    intent.putExtra("weather_id",weatherId);
+                    startActivity(intent);
+                    getActivity().finish();
+                    Log.d(TAG, "ChooseAreaFragment 4");
                 }
             }
         });
-        backButton.setOnClickListener((view)->{
-            if(currentLevel==LEVEL_COUNTY){
-                queryCities();
-            }else if(currentLevel==LEVEL_CITY){
-                queryProvinces();
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(currentLevel==LEVEL_COUNTY){
+                    queryCities();
+                }else if(currentLevel==LEVEL_CITY){
+                    queryProvinces();
+                }
             }
         });
         queryProvinces();
